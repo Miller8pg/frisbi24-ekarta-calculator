@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Калькулятор выгоды ЕКАРТЫ</title>
+<style>
+:root{--ink:#1f1633;--muted:#665c78;--violet:#4600ff;--pink:#ec0b72;--blue:#215eff;--border:#e3d9ff;--positive:#0b8f66;--positive-bg:#e9f8f2;--negative:#b85000;--negative-bg:#fff3e8}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:transparent;font-family:Arial,Helvetica,sans-serif;color:var(--ink)}body{padding:8px}
+.calculator{position:relative;overflow:hidden;width:100%;max-width:800px;margin:0 auto;padding:28px;border:1px solid var(--border);border-radius:28px;background:radial-gradient(circle at 95% 0%,rgba(236,11,114,.11),transparent 27%),radial-gradient(circle at 0% 100%,rgba(70,0,255,.10),transparent 31%),linear-gradient(135deg,#f7f3ff 0%,#fff 55%,#fff4f9 100%);box-shadow:0 18px 44px rgba(70,0,255,.10)}
+.eyebrow{display:inline-block;margin-bottom:10px;padding:7px 12px;border-radius:999px;background:#efe9ff;color:var(--violet);font-size:13px;font-weight:700}
+h1{margin:0 0 9px;font-size:clamp(27px,5vw,36px);line-height:1.12}.lead{max-width:650px;margin:0 0 23px;color:var(--muted);font-size:16px;line-height:1.5}
+.input-panel,.result-panel{border:1px solid var(--border);border-radius:22px;background:rgba(255,255,255,.92)}.input-panel{padding:20px}.input-heading{margin:0 0 14px;font-size:17px;font-weight:700}
+.trip-control{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:15px;align-items:center}input[type=range]{width:100%;accent-color:var(--violet);cursor:pointer}
+input[type=number]{width:100%;height:52px;padding:0 12px;border:2px solid #d9ccff;border-radius:15px;outline:none;background:#fff;color:var(--ink);font:inherit;font-size:21px;font-weight:700;text-align:center}
+input[type=number]:focus{border-color:var(--violet);box-shadow:0 0 0 4px rgba(70,0,255,.10)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.preset{appearance:none;padding:9px 12px;border:1px solid #ddd2ff;border-radius:12px;background:#f8f5ff;color:var(--violet);font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s ease,background .15s ease}.preset:hover{transform:translateY(-1px);background:#efe9ff}
+.result-panel{margin-top:16px;padding:20px}.result-status{display:inline-block;margin-bottom:14px;padding:8px 12px;border-radius:999px;font-size:13px;font-weight:700}.result-status.positive{color:var(--positive);background:var(--positive-bg)}.result-status.negative{color:var(--negative);background:var(--negative-bg)}.result-status.neutral{color:var(--violet);background:#efe9ff}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.metric{min-width:0;padding:15px;border-radius:17px;background:#faf8ff;border:1px solid #e9e1ff}.metric-label{margin-bottom:5px;color:var(--muted);font-size:13px}.metric-value{color:var(--ink);font-size:clamp(20px,4vw,27px);line-height:1.1;font-weight:800;word-break:break-word}.metric.highlight .metric-value{color:var(--violet)}
+.comparison{margin-top:16px;padding:17px;border-radius:18px;background:linear-gradient(90deg,#f4f0ff,#fff1f8);border:1px solid #e4d9ff}.comparison-row{display:grid;grid-template-columns:136px minmax(0,1fr) 90px;gap:10px;align-items:center}.comparison-row+.comparison-row{margin-top:11px}.comparison-name{color:var(--muted);font-size:13px}.bar-track{height:12px;overflow:hidden;border-radius:999px;background:#eae5f3}.bar{height:100%;width:0;border-radius:inherit;transition:width .25s ease}.bar.regular{background:linear-gradient(90deg,#7888ff,#215eff)}.bar.tariff{background:linear-gradient(90deg,#8f55ff,#ec0b72)}.comparison-value{color:var(--ink);font-size:14px;font-weight:700;text-align:right}
+.summary{margin:16px 0 0;color:var(--ink);font-size:17px;line-height:1.45;font-weight:700}.note{margin:15px 0 0;color:#7a708e;font-size:12px;line-height:1.45}
+@media(max-width:620px){body{padding:4px}.calculator{padding:21px 17px;border-radius:23px}.trip-control{grid-template-columns:1fr 92px;gap:10px}.metrics{grid-template-columns:1fr}.comparison-row{grid-template-columns:1fr;gap:6px}.comparison-value{text-align:left}}
+</style>
+</head>
+<body>
+<main class="calculator">
+<div class="eyebrow">Калькулятор выгоды</div>
+<h1>Сколько вы сэкономите с ЕКАРТОЙ</h1>
+<p class="lead">Укажите примерное количество поездок в месяц. Калькулятор сравнит разовую оплату по 42 ₽ с месячным тарифом за 1 500 ₽.</p>
+<section class="input-panel" aria-labelledby="trip-heading">
+<div class="input-heading" id="trip-heading">Количество поездок в месяц</div>
+<div class="trip-control">
+<input id="tripsRange" type="range" min="1" max="120" value="60" step="1" aria-label="Количество поездок, ползунок">
+<input id="tripsNumber" type="number" min="1" max="999" value="60" inputmode="numeric" aria-label="Количество поездок">
+</div>
+<div class="presets" aria-label="Готовые варианты">
+<button class="preset" type="button" data-trips="44">44 поездки</button>
+<button class="preset" type="button" data-trips="60">60 поездок</button>
+<button class="preset" type="button" data-trips="80">80 поездок</button>
+</div>
+</section>
+<section class="result-panel" aria-live="polite">
+<div id="resultStatus" class="result-status positive">Тариф выгоднее</div>
+<div class="metrics">
+<div class="metric"><div class="metric-label">Разовая оплата</div><div id="regularTotal" class="metric-value">2 520 ₽</div></div>
+<div class="metric"><div class="metric-label">Месячный тариф</div><div class="metric-value">1 500 ₽</div></div>
+<div class="metric highlight"><div id="differenceLabel" class="metric-label">Экономия</div><div id="differenceValue" class="metric-value">1 020 ₽</div></div>
+</div>
+<div class="comparison" aria-label="Сравнение стоимости">
+<div class="comparison-row"><div class="comparison-name">Разовые поездки</div><div class="bar-track"><div id="regularBar" class="bar regular"></div></div><div id="regularBarValue" class="comparison-value">2 520 ₽</div></div>
+<div class="comparison-row"><div class="comparison-name">Тариф ЕКАРТЫ</div><div class="bar-track"><div id="tariffBar" class="bar tariff"></div></div><div class="comparison-value">1 500 ₽</div></div>
+</div>
+<p id="summary" class="summary">При 60 поездках одна поездка по тарифу обходится примерно в 25 ₽.</p>
+<p class="note">Расчёт ориентировочный: тариф — 1 500 ₽, разовая поездка — 42 ₽. Возможный сервисный сбор при онлайн-пополнении и другие тарифы не учитываются.</p>
+</section>
+</main>
+<script>
+(()=>{'use strict';
+const FARE=42,TARIFF=1500;
+const range=document.getElementById('tripsRange'),number=document.getElementById('tripsNumber'),status=document.getElementById('resultStatus'),regularTotal=document.getElementById('regularTotal'),differenceLabel=document.getElementById('differenceLabel'),differenceValue=document.getElementById('differenceValue'),summary=document.getElementById('summary'),regularBar=document.getElementById('regularBar'),tariffBar=document.getElementById('tariffBar'),regularBarValue=document.getElementById('regularBarValue');
+const formatRubles=v=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(v))+' ₽';
+const formatTripPrice=v=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(v)+' ₽';
+const sanitizeTrips=raw=>{const parsed=Number.parseInt(raw,10);if(!Number.isFinite(parsed))return 1;return Math.min(999,Math.max(1,parsed));};
+const update=rawTrips=>{
+const trips=sanitizeTrips(rawTrips),regular=trips*FARE,difference=regular-TARIFF,effective=TARIFF/trips;
+number.value=String(trips);range.value=String(Math.min(120,trips));regularTotal.textContent=formatRubles(regular);regularBarValue.textContent=formatRubles(regular);status.className='result-status';
+if(difference>0){status.classList.add('positive');status.textContent='Тариф выгоднее';differenceLabel.textContent='Экономия';differenceValue.textContent=formatRubles(difference);summary.textContent=`При ${trips} поездках одна поездка по тарифу обходится примерно в ${formatTripPrice(effective)}.`;}
+else if(difference<0){status.classList.add('negative');status.textContent='Разовая оплата пока выгоднее';differenceLabel.textContent='Разница';differenceValue.textContent=formatRubles(Math.abs(difference));summary.textContent=`При ${trips} поездках разовая оплата дешевле тарифа на ${formatRubles(Math.abs(difference))}. Тариф начинает экономить примерно с 36 поездок в месяц.`;}
+else{status.classList.add('neutral');status.textContent='Стоимость одинаковая';differenceLabel.textContent='Разница';differenceValue.textContent='0 ₽';summary.textContent=`При ${trips} поездках разовая оплата и месячный тариф стоят одинаково.`;}
+const max=Math.max(regular,TARIFF);regularBar.style.width=`${Math.max(4,(regular/max)*100)}%`;tariffBar.style.width=`${Math.max(4,(TARIFF/max)*100)}%`;
+};
+range.addEventListener('input',e=>update(e.target.value));number.addEventListener('input',e=>{if(e.target.value!=='')update(e.target.value)});number.addEventListener('blur',e=>update(e.target.value));
+document.querySelectorAll('.preset').forEach(button=>button.addEventListener('click',()=>update(button.dataset.trips)));
+update(60);
+})();
+</script>
+</body>
+</html>
