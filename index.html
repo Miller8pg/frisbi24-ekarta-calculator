@@ -5,38 +5,71 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Калькулятор выгоды ЕКАРТЫ</title>
 <style>
-:root{--ink:#1f1633;--muted:#665c78;--violet:#4600ff;--pink:#ec0b72;--border:#e3d9ff;--negative:#b85000}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:transparent;font-family:Arial,Helvetica,sans-serif;color:var(--ink)}body{padding:8px}
-.calculator{position:relative;overflow:hidden;width:100%;max-width:800px;margin:0 auto;padding:28px;border:1px solid var(--border);border-radius:28px;background:radial-gradient(circle at 95% 0%,rgba(236,11,114,.11),transparent 27%),radial-gradient(circle at 0% 100%,rgba(70,0,255,.10),transparent 31%),linear-gradient(135deg,#f7f3ff 0%,#fff 55%,#fff4f9 100%);box-shadow:0 18px 44px rgba(70,0,255,.10)}
-.eyebrow{display:inline-block;margin-bottom:10px;padding:7px 12px;border-radius:999px;background:#efe9ff;color:var(--violet);font-size:13px;font-weight:700}
-h1{margin:0 0 9px;font-size:clamp(27px,5vw,36px);line-height:1.12}.lead{max-width:680px;margin:0 0 23px;color:var(--muted);font-size:16px;line-height:1.5}
-.input-panel,.result-panel{border:1px solid var(--border);border-radius:22px;background:rgba(255,255,255,.92)}.input-panel{padding:20px}.input-heading{margin:0 0 14px;font-size:17px;font-weight:700}
-.trip-control{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:15px;align-items:center}input[type=range]{width:100%;accent-color:var(--violet);cursor:pointer}
-input[type=number]{width:100%;height:52px;padding:0 12px;border:2px solid #d9ccff;border-radius:15px;outline:none;background:#fff;color:var(--ink);font:inherit;font-size:21px;font-weight:700;text-align:center}
+:root{--ink:#1f1633;--muted:#665c78;--violet:#4600ff;--pink:#ec0b72;--border:#e3d9ff;--negative:#b85000;--negative-bg:#fff3e8}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:transparent;font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+body{padding:4px}
+.calculator{position:relative;overflow:hidden;width:100%;max-width:800px;margin:0 auto;padding:25px;border:1px solid var(--border);border-radius:28px;background:radial-gradient(circle at 95% 0%,rgba(236,11,114,.11),transparent 27%),radial-gradient(circle at 0% 100%,rgba(70,0,255,.10),transparent 31%),linear-gradient(135deg,#f7f3ff 0%,#fff 55%,#fff4f9 100%);box-shadow:0 18px 44px rgba(70,0,255,.10)}
+.eyebrow{display:inline-block;margin-bottom:9px;padding:7px 12px;border-radius:999px;background:#efe9ff;color:var(--violet);font-size:13px;font-weight:700}
+h1{margin:0 0 8px;font-size:clamp(27px,5vw,36px);line-height:1.12}
+.lead{max-width:680px;margin:0 0 19px;color:var(--muted);font-size:16px;line-height:1.5}
+.input-panel,.result-panel{border:1px solid var(--border);border-radius:22px;background:rgba(255,255,255,.92)}
+.input-panel{padding:18px}
+.input-heading{margin:0 0 13px;font-size:17px;font-weight:700}
+.trip-control{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:15px;align-items:center}
+input[type=range]{width:100%;accent-color:var(--violet);cursor:pointer}
+input[type=number]{width:100%;height:50px;padding:0 12px;border:2px solid #d9ccff;border-radius:15px;outline:none;background:#fff;color:var(--ink);font:inherit;font-size:21px;font-weight:700;text-align:center}
 input[type=number]:focus{border-color:var(--violet);box-shadow:0 0 0 4px rgba(70,0,255,.10)}
-.presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}.preset{appearance:none;min-height:64px;padding:11px 13px;border:1px solid #ddd2ff;border-radius:14px;background:#f8f5ff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:transform .15s ease,background .15s ease,border-color .15s ease}.preset:hover{transform:translateY(-1px);background:#efe9ff;border-color:#cbb8ff}.preset-schedule{display:block;margin-bottom:3px;color:var(--ink);font-size:14px;font-weight:700}.preset-trips{display:block;color:var(--violet);font-size:14px;font-weight:700}
-.result-panel{margin-top:16px;padding:20px}.result-status{display:inline-block;margin-bottom:14px;padding:8px 12px;border-radius:999px;background:#efe9ff;color:var(--violet);font-size:13px;font-weight:700}
-.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.metric{min-width:0;padding:15px;border-radius:17px;background:#faf8ff;border:1px solid #e9e1ff}.metric-label{margin-bottom:5px;color:var(--muted);font-size:13px;line-height:1.35}.metric-value{color:var(--ink);font-size:clamp(20px,4vw,27px);line-height:1.1;font-weight:800;word-break:break-word}.metric.highlight .metric-value{color:var(--violet)}.metric.highlight.negative .metric-value{color:var(--negative)}
-.summary{margin:18px 0 0;padding:16px 18px;border-radius:18px;background:linear-gradient(90deg,#f2edff,#fff0f7);border:1px solid #e1d4ff;color:var(--ink);font-size:18px;line-height:1.45;font-weight:700}
-@media(max-width:620px){body{padding:4px}.calculator{padding:21px 17px;border-radius:23px}.trip-control{grid-template-columns:1fr 92px;gap:10px}.metrics{grid-template-columns:1fr}.presets{gap:8px}.preset{padding:10px;min-height:68px}.preset-schedule,.preset-trips{font-size:13px}}
+.presets-label{margin:14px 0 9px;color:var(--muted);font-size:13px}
+.presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.preset{appearance:none;min-height:62px;padding:10px 13px;border:1px solid #ddd2ff;border-radius:14px;background:#f8f5ff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:transform .15s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease}
+.preset:hover{transform:translateY(-1px);background:#efe9ff;border-color:#cbb8ff}
+.preset:focus-visible{outline:3px solid rgba(70,0,255,.18);outline-offset:2px}
+.preset.active{background:linear-gradient(135deg,#4600ff,#7b3cff);border-color:#4600ff;box-shadow:0 8px 18px rgba(70,0,255,.18)}
+.preset-schedule{display:block;margin-bottom:3px;color:var(--ink);font-size:14px;font-weight:700}
+.preset-trips{display:block;color:var(--violet);font-size:14px;font-weight:700}
+.preset.active .preset-schedule,.preset.active .preset-trips{color:#fff}
+.result-panel{margin-top:14px;padding:18px}
+.result-status{display:inline-block;margin-bottom:13px;padding:8px 12px;border-radius:999px;background:#efe9ff;color:var(--violet);font-size:13px;font-weight:700}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.metric{min-width:0;padding:14px;border-radius:17px;background:#faf8ff;border:1px solid #e9e1ff}
+.metric-label{margin-bottom:5px;color:var(--muted);font-size:13px;line-height:1.35}
+.metric-value{color:var(--ink);font-size:clamp(20px,4vw,27px);line-height:1.1;font-weight:800;word-break:break-word}
+.metric.highlight .metric-value{color:var(--violet)}
+.metric.highlight.negative{background:var(--negative-bg);border-color:#ffd8b8}
+.metric.highlight.negative .metric-value{color:var(--negative)}
+.summary{margin:15px 0 0;padding:15px 17px;border-radius:18px;background:linear-gradient(90deg,#f2edff,#fff0f7);border:1px solid #e1d4ff;color:var(--ink);font-size:18px;line-height:1.45;font-weight:700}
+.summary.negative{background:var(--negative-bg);border-color:#ffd8b8;color:#7a3700}
+@media(max-width:620px){
+body{padding:2px}
+.calculator{padding:20px 16px;border-radius:23px}
+.trip-control{grid-template-columns:1fr 90px;gap:9px}
+.presets{gap:8px}
+.preset{padding:10px;min-height:66px}
+.preset-schedule,.preset-trips{font-size:13px}
+.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+.metric.highlight{grid-column:1/-1}
+.summary{font-size:17px}
+}
 </style>
 </head>
 <body>
 <main class="calculator">
 <div class="eyebrow">Калькулятор выгоды</div>
 <h1>Рассчитайте свою экономию</h1>
-<p class="lead">Укажите количество ваших поездок в месяц или выберите готовый вариант. Калькулятор покажет вашу экономию при использовании ЕКАРТЫ.</p>
+<p class="lead">Укажите количество поездок в месяц или выберите один из готовых вариантов. Калькулятор покажет, сколько вы сможете сэкономить с ЕКАРТОЙ.</p>
 <section class="input-panel" aria-labelledby="trip-heading">
 <div class="input-heading" id="trip-heading">Количество поездок в месяц</div>
 <div class="trip-control">
-<input id="tripsRange" type="range" min="1" max="120" value="60" step="1" aria-label="Количество поездок, ползунок">
-<input id="tripsNumber" type="number" min="1" max="999" value="60" inputmode="numeric" aria-label="Количество поездок">
+<input id="tripsRange" type="range" min="1" max="150" value="60" step="1" aria-label="Количество поездок, ползунок">
+<input id="tripsNumber" type="number" min="1" max="150" value="60" inputmode="numeric" aria-label="Количество поездок">
 </div>
+<div class="presets-label">Примерное количество поездок за месяц</div>
 <div class="presets" aria-label="Готовые варианты">
-<button class="preset" type="button" data-trips="42"><span class="preset-schedule">пн–пт, 2 раза в день</span><span class="preset-trips">42 поездки</span></button>
-<button class="preset" type="button" data-trips="60"><span class="preset-schedule">пн–вс, 2 раза в день</span><span class="preset-trips">60 поездок</span></button>
-<button class="preset" type="button" data-trips="84"><span class="preset-schedule">пн–пт, 4 раза в день</span><span class="preset-trips">84 поездки</span></button>
-<button class="preset" type="button" data-trips="120"><span class="preset-schedule">пн–вс, 4 раза в день</span><span class="preset-trips">120 поездок</span></button>
+<button class="preset" type="button" data-trips="42" aria-pressed="false"><span class="preset-schedule">пн–пт, 2 раза в день</span><span class="preset-trips">≈ 42 поездки</span></button>
+<button class="preset" type="button" data-trips="60" aria-pressed="false"><span class="preset-schedule">пн–вс, 2 раза в день</span><span class="preset-trips">≈ 60 поездок</span></button>
+<button class="preset" type="button" data-trips="84" aria-pressed="false"><span class="preset-schedule">пн–пт, 4 раза в день</span><span class="preset-trips">≈ 84 поездки</span></button>
+<button class="preset" type="button" data-trips="120" aria-pressed="false"><span class="preset-schedule">пн–вс, 4 раза в день</span><span class="preset-trips">≈ 120 поездок</span></button>
 </div>
 </section>
 <section class="result-panel" aria-live="polite">
@@ -44,27 +77,58 @@ input[type=number]:focus{border-color:var(--violet);box-shadow:0 0 0 4px rgba(70
 <div class="metrics">
 <div class="metric"><div class="metric-label">Мои расходы на поездки</div><div id="regularTotal" class="metric-value">2 520 ₽</div></div>
 <div class="metric"><div class="metric-label">Расходы по ЕКАРТЕ</div><div class="metric-value">1 500 ₽</div></div>
-<div id="savingMetric" class="metric highlight"><div class="metric-label">Моя экономия с ЕКАРТОЙ</div><div id="differenceValue" class="metric-value">1 020 ₽</div></div>
+<div id="savingMetric" class="metric highlight"><div id="differenceLabel" class="metric-label">Моя экономия с ЕКАРТОЙ</div><div id="differenceValue" class="metric-value">1 020 ₽</div></div>
 </div>
 <p id="summary" class="summary">По ЕКАРТЕ я трачу 25 ₽ вместо 42 ₽.</p>
 </section>
 </main>
 <script>
 (()=>{'use strict';
-const FARE=42,TARIFF=1500;
-const range=document.getElementById('tripsRange'),number=document.getElementById('tripsNumber'),regularTotal=document.getElementById('regularTotal'),differenceValue=document.getElementById('differenceValue'),summary=document.getElementById('summary'),savingMetric=document.getElementById('savingMetric');
-const formatRubles=v=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(v))+' ₽';
-const formatTripPrice=v=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(v)+' ₽';
-const sanitizeTrips=raw=>{const parsed=Number.parseInt(raw,10);if(!Number.isFinite(parsed))return 1;return Math.min(999,Math.max(1,parsed));};
+const FARE=42,TARIFF=1500,MAX_TRIPS=150;
+const range=document.getElementById('tripsRange');
+const number=document.getElementById('tripsNumber');
+const regularTotal=document.getElementById('regularTotal');
+const differenceLabel=document.getElementById('differenceLabel');
+const differenceValue=document.getElementById('differenceValue');
+const summary=document.getElementById('summary');
+const savingMetric=document.getElementById('savingMetric');
+const presets=[...document.querySelectorAll('.preset')];
+const formatRubles=value=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(value))+' ₽';
+const sanitizeTrips=raw=>{const parsed=Number.parseInt(raw,10);if(!Number.isFinite(parsed))return 1;return Math.min(MAX_TRIPS,Math.max(1,parsed));};
+const setActivePreset=trips=>{presets.forEach(button=>{const active=Number(button.dataset.trips)===trips;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});};
 const update=rawTrips=>{
-const trips=sanitizeTrips(rawTrips),regular=trips*FARE,difference=regular-TARIFF,effective=TARIFF/trips;
-number.value=String(trips);range.value=String(Math.min(120,trips));regularTotal.textContent=formatRubles(regular);
-savingMetric.classList.toggle('negative',difference<0);
-differenceValue.textContent=difference<0?'−'+formatRubles(Math.abs(difference)):formatRubles(difference);
-summary.textContent=`По ЕКАРТЕ я трачу ${formatTripPrice(effective)} вместо 42 ₽.`;
+const trips=sanitizeTrips(rawTrips);
+const regular=trips*FARE;
+const difference=regular-TARIFF;
+const effective=Math.round(TARIFF/trips);
+number.value=String(trips);
+range.value=String(trips);
+regularTotal.textContent=formatRubles(regular);
+setActivePreset(trips);
+if(difference>0){
+savingMetric.classList.remove('negative');
+differenceLabel.textContent='Моя экономия с ЕКАРТОЙ';
+differenceValue.textContent=formatRubles(difference);
+summary.classList.remove('negative');
+summary.textContent=`По ЕКАРТЕ я трачу ${effective} ₽ вместо 42 ₽.`;
+}else if(difference<0){
+savingMetric.classList.add('negative');
+differenceLabel.textContent='Переплата по тарифу';
+differenceValue.textContent=formatRubles(Math.abs(difference));
+summary.classList.add('negative');
+summary.textContent=`При ${trips} поездках разовая оплата выгоднее на ${formatRubles(Math.abs(difference))}. Тариф начинает экономить примерно с 36 поездок в месяц.`;
+}else{
+savingMetric.classList.remove('negative');
+differenceLabel.textContent='Разница';
+differenceValue.textContent='0 ₽';
+summary.classList.remove('negative');
+summary.textContent='Разовая оплата и тариф стоят одинаково.';
+}
 };
-range.addEventListener('input',e=>update(e.target.value));number.addEventListener('input',e=>{if(e.target.value!=='')update(e.target.value)});number.addEventListener('blur',e=>update(e.target.value));
-document.querySelectorAll('.preset').forEach(button=>button.addEventListener('click',()=>update(button.dataset.trips)));
+range.addEventListener('input',event=>update(event.target.value));
+number.addEventListener('input',event=>{if(event.target.value!=='')update(event.target.value);});
+number.addEventListener('blur',event=>update(event.target.value));
+presets.forEach(button=>button.addEventListener('click',()=>update(button.dataset.trips)));
 update(60);
 })();
 </script>
