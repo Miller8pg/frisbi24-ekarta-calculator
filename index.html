@@ -5,136 +5,437 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Калькулятор выгоды ЕКАРТЫ</title>
 <style>
-:root{--ink:#1f1633;--muted:#665c78;--violet:#4600ff;--pink:#ec0b72;--border:#e3d9ff;--negative:#b85000;--negative-bg:#fff3e8}
+:root{
+  --ink:#1f1633;
+  --muted:#665c78;
+  --violet:#4600ff;
+  --violet-dark:#3300bd;
+  --pink:#ec0b72;
+  --border:#e3d9ff;
+  --positive-bg:#f1ecff;
+  --negative:#984300;
+  --negative-bg:#fff3e8;
+  --focus:rgba(70,0,255,.22)
+}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:transparent;font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+[hidden]{display:none!important}
+html,body{
+  margin:0;
+  min-height:100%;
+  background:transparent;
+  color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif
+}
 body{padding:4px}
-.calculator{position:relative;overflow:hidden;width:100%;max-width:800px;margin:0 auto;padding:25px;border:1px solid var(--border);border-radius:28px;background:radial-gradient(circle at 95% 0%,rgba(236,11,114,.11),transparent 27%),radial-gradient(circle at 0% 100%,rgba(70,0,255,.10),transparent 31%),linear-gradient(135deg,#f7f3ff 0%,#fff 55%,#fff4f9 100%);box-shadow:0 18px 44px rgba(70,0,255,.10)}
-.eyebrow{display:inline-block;margin-bottom:9px;padding:7px 12px;border-radius:999px;background:#efe9ff;color:var(--violet);font-size:13px;font-weight:700}
-h1{margin:0 0 8px;font-size:clamp(27px,5vw,36px);line-height:1.12}
-.lead{max-width:680px;margin:0 0 19px;color:var(--muted);font-size:16px;line-height:1.5}
-.input-panel,.result-panel{border:1px solid var(--border);border-radius:22px;background:rgba(255,255,255,.92)}
+button,input{font:inherit}
+.calculator{
+  position:relative;
+  overflow:hidden;
+  width:100%;
+  max-width:800px;
+  margin:0 auto;
+  padding:25px;
+  border:1px solid var(--border);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 95% 0%,rgba(236,11,114,.11),transparent 27%),
+    radial-gradient(circle at 0% 100%,rgba(70,0,255,.10),transparent 31%),
+    linear-gradient(135deg,#f7f3ff 0%,#fff 55%,#fff4f9 100%);
+  box-shadow:0 18px 44px rgba(70,0,255,.10)
+}
+.eyebrow{
+  display:inline-block;
+  margin-bottom:9px;
+  padding:7px 12px;
+  border-radius:999px;
+  background:#efe9ff;
+  color:var(--violet-dark);
+  font-size:13px;
+  font-weight:700
+}
+h1{
+  margin:0 0 8px;
+  font-size:clamp(27px,5vw,36px);
+  line-height:1.12
+}
+.lead{
+  max-width:680px;
+  margin:0 0 19px;
+  color:var(--muted);
+  font-size:16px;
+  line-height:1.5
+}
+.input-panel,.result-panel{
+  border:1px solid var(--border);
+  border-radius:22px;
+  background:rgba(255,255,255,.94)
+}
 .input-panel{padding:18px}
-.input-heading{margin:0 0 13px;font-size:17px;font-weight:700}
-.trip-control{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:15px;align-items:center}
-input[type=range]{width:100%;accent-color:var(--violet);cursor:pointer}
-input[type=number]{width:100%;height:50px;padding:0 12px;border:2px solid #d9ccff;border-radius:15px;outline:none;background:#fff;color:var(--ink);font:inherit;font-size:21px;font-weight:700;text-align:center}
-input[type=number]:focus{border-color:var(--violet);box-shadow:0 0 0 4px rgba(70,0,255,.10)}
+.input-heading-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 12px;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:13px
+}
+.input-heading{font-size:17px;font-weight:700}
+.break-even-badge{
+  padding:6px 9px;
+  border-radius:999px;
+  background:#f1ecff;
+  color:var(--violet-dark);
+  font-size:12px;
+  font-weight:700
+}
+.trip-control{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 112px;
+  gap:15px;
+  align-items:center
+}
+.range-wrap{min-width:0}
+input[type=range]{
+  display:block;
+  width:100%;
+  margin:0;
+  accent-color:var(--violet);
+  cursor:pointer
+}
+.range-scale{
+  display:flex;
+  justify-content:space-between;
+  margin-top:6px;
+  color:var(--muted);
+  font-size:11px
+}
+input[type=number]{
+  width:100%;
+  height:50px;
+  padding:0 10px;
+  border:2px solid #d9ccff;
+  border-radius:15px;
+  outline:none;
+  background:#fff;
+  color:var(--ink);
+  font-size:21px;
+  font-weight:700;
+  text-align:center
+}
+input[type=number]:focus-visible{
+  border-color:var(--violet);
+  box-shadow:0 0 0 4px var(--focus)
+}
+input[type=range]:focus-visible{
+  outline:3px solid var(--focus);
+  outline-offset:5px;
+  border-radius:999px
+}
 .presets-label{margin:14px 0 9px;color:var(--muted);font-size:13px}
 .presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
-.preset{appearance:none;min-height:76px;padding:10px;border:1px solid #ddd2ff;border-radius:14px;background:#f8f5ff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:transform .15s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease}
+.preset{
+  appearance:none;
+  min-height:76px;
+  padding:10px;
+  border:1px solid #ddd2ff;
+  border-radius:14px;
+  background:#f8f5ff;
+  color:var(--ink);
+  text-align:left;
+  cursor:pointer;
+  transition:transform .15s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease
+}
 .preset:hover{transform:translateY(-1px);background:#efe9ff;border-color:#cbb8ff}
-.preset:focus-visible{outline:3px solid rgba(70,0,255,.18);outline-offset:2px}
-.preset.active{background:linear-gradient(135deg,#4600ff,#7b3cff);border-color:#4600ff;box-shadow:0 8px 18px rgba(70,0,255,.18)}
-.preset-schedule{display:block;margin-bottom:4px;color:var(--ink);font-size:13px;line-height:1.25;font-weight:700}
-.preset-trips{display:block;color:var(--violet);font-size:14px;line-height:1.2;font-weight:700}
+.preset:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.preset.active{
+  background:linear-gradient(135deg,#4600ff,#7330f2);
+  border-color:#4600ff;
+  box-shadow:0 8px 18px rgba(70,0,255,.18)
+}
+.preset-schedule{
+  display:block;
+  margin-bottom:4px;
+  color:var(--ink);
+  font-size:13px;
+  line-height:1.25;
+  font-weight:700
+}
+.preset-trips{
+  display:block;
+  color:var(--violet-dark);
+  font-size:14px;
+  line-height:1.2;
+  font-weight:700
+}
 .preset.active .preset-schedule,.preset.active .preset-trips{color:#fff}
 .result-panel{margin-top:14px;padding:18px}
-.result-status{display:inline-block;margin-bottom:13px;padding:8px 12px;border-radius:999px;background:#efe9ff;color:var(--violet);font-size:13px;font-weight:700}
+.result-status{
+  display:inline-block;
+  margin-bottom:13px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:var(--positive-bg);
+  color:var(--violet-dark);
+  font-size:13px;
+  font-weight:700
+}
+.result-status.negative{background:var(--negative-bg);color:var(--negative)}
 .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
-.metric{min-width:0;padding:14px;border-radius:17px;background:#faf8ff;border:1px solid #e9e1ff}
+.metric{
+  min-width:0;
+  padding:14px;
+  border:1px solid #e9e1ff;
+  border-radius:17px;
+  background:#faf8ff
+}
 .metric-label{margin-bottom:5px;color:var(--muted);font-size:13px;line-height:1.35}
-.metric-value{color:var(--ink);font-size:clamp(20px,4vw,27px);line-height:1.1;font-weight:800;word-break:break-word}
+.metric-value{
+  color:var(--ink);
+  font-size:clamp(20px,4vw,27px);
+  line-height:1.1;
+  font-weight:800;
+  overflow-wrap:anywhere
+}
 .metric.highlight .metric-value{color:var(--violet)}
-.metric.highlight.negative{background:var(--negative-bg);border-color:#ffd8b8}
+.metric.highlight.negative{border-color:#ffd1a8;background:var(--negative-bg)}
 .metric.highlight.negative .metric-value{color:var(--negative)}
-.summary{margin:15px 0 0;padding:15px 17px;border-radius:18px;background:linear-gradient(90deg,#f2edff,#fff0f7);border:1px solid #e1d4ff;color:var(--ink);font-size:18px;line-height:1.45;font-weight:700}
-.summary.negative{background:var(--negative-bg);border-color:#ffd8b8;color:#7a3700}
+.summary{
+  margin:15px 0 0;
+  padding:15px 17px;
+  border:1px solid #e1d4ff;
+  border-radius:18px;
+  background:linear-gradient(90deg,#f2edff,#fff0f7);
+  color:var(--ink);
+  font-size:18px;
+  line-height:1.45;
+  font-weight:700
+}
+.summary.negative{border-color:#ffd1a8;background:var(--negative-bg);color:#713200}
+.calculation-details{
+  margin-top:12px;
+  border:1px solid #e7dfff;
+  border-radius:15px;
+  background:#fff
+}
+.calculation-details summary{
+  padding:12px 14px;
+  color:var(--violet-dark);
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer
+}
+.calculation-details summary:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:12px}
+.formula{margin:0;padding:0 14px 14px;color:var(--muted);font-size:14px;line-height:1.5}
+.next-step{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px 16px;
+  align-items:center;
+  justify-content:space-between;
+  margin-top:12px;
+  padding:14px 15px;
+  border:1px solid #ded1ff;
+  border-radius:16px;
+  background:#f7f3ff
+}
+.next-step-copy{flex:1 1 280px;color:var(--ink);font-size:14px;line-height:1.45}
+.next-step-link{
+  display:inline-block;
+  padding:12px 16px;
+  border-radius:13px;
+  background:var(--violet);
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+  white-space:nowrap
+}
+.next-step-link:hover{background:var(--violet-dark)}
+.next-step-link:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 @media(max-width:680px){
-.presets{grid-template-columns:repeat(2,minmax(0,1fr))}
-.preset{min-height:62px;padding:10px 13px}
-.preset-schedule{font-size:14px}
+  .presets{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .preset{min-height:68px;padding:10px 13px}
+  .preset-schedule{font-size:14px}
 }
 @media(max-width:620px){
-body{padding:2px}
-.calculator{padding:20px 16px;border-radius:23px}
-.trip-control{grid-template-columns:1fr 90px;gap:9px}
-.presets{gap:8px}
-.preset{padding:10px;min-height:66px}
-.preset-schedule,.preset-trips{font-size:13px}
-.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
-.metric.highlight{grid-column:1/-1}
-.summary{font-size:17px}
+  body{padding:2px}
+  .calculator{padding:20px 16px;border-radius:23px}
+  .trip-control{grid-template-columns:minmax(0,1fr) 90px;gap:9px}
+  .presets{gap:8px}
+  .preset{padding:10px;min-height:70px}
+  .preset-schedule,.preset-trips{font-size:13px}
+  .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .metric.highlight{grid-column:1/-1}
+  .summary{font-size:17px}
+  .next-step-link{width:100%;text-align:center}
+}
+@media(max-width:360px){
+  .calculator{padding:18px 13px}
+  .input-panel,.result-panel{padding:15px}
+  .preset{padding:9px;min-height:74px}
+}
+@media(prefers-reduced-motion:reduce){
+  .preset{transition:none}
 }
 </style>
 </head>
 <body>
 <main class="calculator">
-<div class="eyebrow">Калькулятор выгоды</div>
-<h1>Рассчитайте свою экономию</h1>
-<p class="lead">Укажите количество поездок в месяц или выберите один из готовых вариантов. Калькулятор покажет, сколько вы сможете сэкономить с ЕКАРТОЙ.</p>
-<section class="input-panel" aria-labelledby="trip-heading">
-<div class="input-heading" id="trip-heading">Количество поездок в месяц</div>
-<div class="trip-control">
-<input id="tripsRange" type="range" min="1" max="150" value="60" step="1" aria-label="Количество поездок, ползунок">
-<input id="tripsNumber" type="number" min="1" max="150" value="60" inputmode="numeric" aria-label="Количество поездок">
-</div>
-<div class="presets-label">Примерное количество поездок за месяц</div>
-<div class="presets" aria-label="Готовые варианты">
-<button class="preset" type="button" data-trips="42" aria-pressed="false"><span class="preset-schedule">пн–пт, 2 раза в день</span><span class="preset-trips">≈ 42 поездки</span></button>
-<button class="preset" type="button" data-trips="60" aria-pressed="false"><span class="preset-schedule">пн–вс, 2 раза в день</span><span class="preset-trips">≈ 60 поездок</span></button>
-<button class="preset" type="button" data-trips="84" aria-pressed="false"><span class="preset-schedule">пн–пт, 4 раза в день</span><span class="preset-trips">≈ 84 поездки</span></button>
-<button class="preset" type="button" data-trips="120" aria-pressed="false"><span class="preset-schedule">пн–вс, 4 раза в день</span><span class="preset-trips">≈ 120 поездок</span></button>
-</div>
-</section>
-<section class="result-panel" aria-live="polite">
-<div class="result-status">Расчёт экономии</div>
-<div class="metrics">
-<div class="metric"><div class="metric-label">Мои расходы на поездки</div><div id="regularTotal" class="metric-value">2 520 ₽</div></div>
-<div class="metric"><div class="metric-label">Расходы по ЕКАРТЕ</div><div class="metric-value">1 500 ₽</div></div>
-<div id="savingMetric" class="metric highlight"><div id="differenceLabel" class="metric-label">Моя экономия с ЕКАРТОЙ</div><div id="differenceValue" class="metric-value">1 020 ₽</div></div>
-</div>
-<p id="summary" class="summary">По ЕКАРТЕ я трачу 25 ₽ вместо 42 ₽.</p>
-</section>
+  <div class="eyebrow">Калькулятор выгоды</div>
+  <h1>Выгоден ли вам безлимитный тариф?</h1>
+  <p class="lead">Укажите количество поездок в месяц. Мы сравним обычную разовую оплату по 42 ₽ с безлимитным тарифом за 1 500 ₽.</p>
+
+  <section class="input-panel" aria-labelledby="trip-heading">
+    <div class="input-heading-row">
+      <div class="input-heading" id="trip-heading">Количество поездок в месяц</div>
+      <div class="break-even-badge">Выгода начинается с 36 поездок</div>
+    </div>
+    <div class="trip-control">
+      <div class="range-wrap">
+        <input id="tripsRange" type="range" min="1" max="150" value="60" step="1" aria-labelledby="trip-heading" aria-describedby="range-help">
+        <div class="range-scale" aria-hidden="true"><span>1</span><span>150</span></div>
+      </div>
+      <input id="tripsNumber" type="number" min="1" max="150" value="60" step="1" inputmode="numeric" aria-labelledby="trip-heading" aria-describedby="range-help">
+    </div>
+    <div id="range-help" class="presets-label">Можно ввести число или выбрать примерный сценарий</div>
+    <div class="presets" aria-label="Готовые сценарии поездок">
+      <button class="preset" type="button" data-trips="42" aria-pressed="false"><span class="preset-schedule">пн–пт, 2 раза в день</span><span class="preset-trips">≈ 42 поездки</span></button>
+      <button class="preset" type="button" data-trips="60" aria-pressed="false"><span class="preset-schedule">пн–вс, 2 раза в день</span><span class="preset-trips">≈ 60 поездок</span></button>
+      <button class="preset" type="button" data-trips="84" aria-pressed="false"><span class="preset-schedule">пн–пт, 4 раза в день</span><span class="preset-trips">≈ 84 поездки</span></button>
+      <button class="preset" type="button" data-trips="120" aria-pressed="false"><span class="preset-schedule">пн–вс, 4 раза в день</span><span class="preset-trips">≈ 120 поездок</span></button>
+    </div>
+  </section>
+
+  <section class="result-panel" aria-labelledby="result-heading">
+    <div id="result-heading" class="result-status">Безлимитный тариф выгоднее</div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Мои расходы на поездки</div><div id="regularTotal" class="metric-value">2 520 ₽</div></div>
+      <div class="metric"><div class="metric-label">Расходы по ЕКАРТЕ</div><div class="metric-value">1 500 ₽</div></div>
+      <div id="savingMetric" class="metric highlight"><div id="differenceLabel" class="metric-label">Моя экономия с ЕКАРТОЙ</div><div id="differenceValue" class="metric-value">1 020 ₽</div></div>
+    </div>
+    <p id="summary" class="summary" role="status" aria-live="polite" aria-atomic="true">Экономия — 1 020 ₽ в месяц. Средняя стоимость одной поездки по тарифу — ≈ 25 ₽.</p>
+    <details class="calculation-details">
+      <summary>Как рассчитано</summary>
+      <p id="formula" class="formula">60 поездок × 42 ₽ = 2 520 ₽. Экономия: 2 520 ₽ − 1 500 ₽ = 1 020 ₽.</p>
+    </details>
+    <div id="nextStep" class="next-step">
+      <div class="next-step-copy"><strong>Тариф вам подходит.</strong> Оформить ЕКАРТУ или сменить тариф можно в кассе Фрисби.</div>
+      <a class="next-step-link" href="https://frisbi24.ru/payment-points" target="_top">Найти кассу</a>
+    </div>
+  </section>
 </main>
+
 <script>
 (()=>{'use strict';
-const FARE=42,TARIFF=1500,MAX_TRIPS=150;
+const FARE=42;
+const TARIFF=1500;
+const MAX_TRIPS=150;
+const BREAK_EVEN=Math.floor(TARIFF/FARE)+1;
+
 const range=document.getElementById('tripsRange');
 const number=document.getElementById('tripsNumber');
+const resultHeading=document.getElementById('result-heading');
 const regularTotal=document.getElementById('regularTotal');
 const differenceLabel=document.getElementById('differenceLabel');
 const differenceValue=document.getElementById('differenceValue');
 const summary=document.getElementById('summary');
+const formula=document.getElementById('formula');
 const savingMetric=document.getElementById('savingMetric');
+const nextStep=document.getElementById('nextStep');
 const presets=[...document.querySelectorAll('.preset')];
-const formatRubles=value=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(value))+' ₽';
-const sanitizeTrips=raw=>{const parsed=Number.parseInt(raw,10);if(!Number.isFinite(parsed))return 1;return Math.min(MAX_TRIPS,Math.max(1,parsed));};
-const setActivePreset=trips=>{presets.forEach(button=>{const active=Number(button.dataset.trips)===trips;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});};
-const update=rawTrips=>{
-const trips=sanitizeTrips(rawTrips);
-const regular=trips*FARE;
-const difference=regular-TARIFF;
-const effective=Math.round(TARIFF/trips);
-number.value=String(trips);
-range.value=String(trips);
-regularTotal.textContent=formatRubles(regular);
-setActivePreset(trips);
-if(difference>0){
-savingMetric.classList.remove('negative');
-differenceLabel.textContent='Моя экономия с ЕКАРТОЙ';
-differenceValue.textContent=formatRubles(difference);
-summary.classList.remove('negative');
-summary.textContent=`По ЕКАРТЕ я трачу ${effective} ₽ вместо 42 ₽.`;
-}else if(difference<0){
-savingMetric.classList.add('negative');
-differenceLabel.textContent='Переплата по тарифу';
-differenceValue.textContent=formatRubles(Math.abs(difference));
-summary.classList.add('negative');
-summary.textContent=`При ${trips} поездках разовая оплата выгоднее на ${formatRubles(Math.abs(difference))}. Тариф начинает экономить примерно с 36 поездок в месяц.`;
-}else{
-savingMetric.classList.remove('negative');
-differenceLabel.textContent='Разница';
-differenceValue.textContent='0 ₽';
-summary.classList.remove('negative');
-summary.textContent='Разовая оплата и тариф стоят одинаково.';
-}
+
+const rubles=new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0});
+const decimal=new Intl.NumberFormat('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:1});
+const formatRubles=value=>rubles.format(Math.round(value))+' ₽';
+const formatAverage=value=>decimal.format(value)+' ₽';
+const sanitizeTrips=raw=>{
+  const parsed=Number.parseInt(raw,10);
+  if(!Number.isFinite(parsed))return 1;
+  return Math.min(MAX_TRIPS,Math.max(1,parsed));
 };
+const tripCase=value=>{
+  const lastTwo=value%100;
+  if(lastTwo>=11&&lastTwo<=14)return 'поездках';
+  return value%10===1?'поездке':'поездках';
+};
+const setActivePreset=trips=>{
+  presets.forEach(button=>{
+    const active=Number(button.dataset.trips)===trips;
+    button.classList.toggle('active',active);
+    button.setAttribute('aria-pressed',String(active));
+  });
+};
+
+const update=rawTrips=>{
+  const trips=sanitizeTrips(rawTrips);
+  const regular=trips*FARE;
+  const difference=regular-TARIFF;
+  const average=TARIFF/trips;
+
+  number.value=String(trips);
+  range.value=String(trips);
+  regularTotal.textContent=formatRubles(regular);
+  setActivePreset(trips);
+
+  if(difference>0){
+    resultHeading.textContent=trips===BREAK_EVEN?'Тариф уже немного выгоднее':'Безлимитный тариф выгоднее';
+    resultHeading.classList.remove('negative');
+    savingMetric.classList.remove('negative');
+    differenceLabel.textContent='Моя экономия с ЕКАРТОЙ';
+    differenceValue.textContent=formatRubles(difference);
+    summary.classList.remove('negative');
+    summary.textContent=`Экономия — ${formatRubles(difference)} в месяц. Средняя стоимость одной поездки по тарифу — ≈ ${formatAverage(average)}.`;
+    formula.textContent=`Разовая оплата: ${trips} × ${formatRubles(FARE)} = ${formatRubles(regular)}. Экономия: ${formatRubles(regular)} − ${formatRubles(TARIFF)} = ${formatRubles(difference)}.`;
+    nextStep.hidden=false;
+  }else if(difference<0){
+    const overpayment=Math.abs(difference);
+    resultHeading.textContent='Разовая оплата выгоднее';
+    resultHeading.classList.add('negative');
+    savingMetric.classList.add('negative');
+    differenceLabel.textContent='Переплата по тарифу';
+    differenceValue.textContent=formatRubles(overpayment);
+    summary.classList.add('negative');
+    summary.textContent=`При ${trips} ${tripCase(trips)} разовая оплата дешевле на ${formatRubles(overpayment)}. Безлимитный тариф начинает экономить с ${BREAK_EVEN} поездок в месяц.`;
+    formula.textContent=`Разовая оплата: ${trips} × ${formatRubles(FARE)} = ${formatRubles(regular)}. Переплата по тарифу: ${formatRubles(TARIFF)} − ${formatRubles(regular)} = ${formatRubles(overpayment)}.`;
+    nextStep.hidden=true;
+  }else{
+    resultHeading.textContent='Расходы одинаковы';
+    resultHeading.classList.remove('negative');
+    savingMetric.classList.remove('negative');
+    differenceLabel.textContent='Разница';
+    differenceValue.textContent='0 ₽';
+    summary.classList.remove('negative');
+    summary.textContent='Разовая оплата и безлимитный тариф стоят одинаково.';
+    formula.textContent=`Разовая оплата: ${trips} × ${formatRubles(FARE)} = ${formatRubles(TARIFF)}.`;
+    nextStep.hidden=true;
+  }
+};
+
 range.addEventListener('input',event=>update(event.target.value));
 number.addEventListener('input',event=>{if(event.target.value!=='')update(event.target.value);});
 number.addEventListener('blur',event=>update(event.target.value));
 presets.forEach(button=>button.addEventListener('click',()=>update(button.dataset.trips)));
+
+let resizeFrame=0;
+const sendHeight=()=>{
+  if(window.parent===window)return;
+  cancelAnimationFrame(resizeFrame);
+  resizeFrame=requestAnimationFrame(()=>{
+    const calculator=document.querySelector('.calculator');
+    const bodyStyle=getComputedStyle(document.body);
+    const contentHeight=calculator
+      ? calculator.getBoundingClientRect().bottom+window.scrollY+Number.parseFloat(bodyStyle.paddingBottom||'0')
+      : document.body.scrollHeight;
+    window.parent.postMessage({
+      type:'frisbi24-ekarta-calculator-height',
+      height:Math.ceil(contentHeight)
+    },'*');
+  });
+};
+if('ResizeObserver' in window)new ResizeObserver(sendHeight).observe(document.body);
+window.addEventListener('load',sendHeight);
+
 update(60);
+sendHeight();
 })();
 </script>
 </body>
