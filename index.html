@@ -179,7 +179,8 @@ input[type=range]:focus-visible{
   font-size:13px;
   font-weight:700
 }
-.result-status.negative{background:var(--negative-bg);color:var(--negative)}
+.tariff-status{margin:12px 0 0;color:var(--violet-dark);font-size:16px;line-height:1.45;font-weight:700}
+.tariff-status.negative{color:var(--negative)}
 .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
 .metric{
   min-width:0;
@@ -306,20 +307,21 @@ input[type=range]:focus-visible{
   </section>
 
   <section class="result-panel" aria-labelledby="result-heading">
-    <div id="result-heading" class="result-status">Безлимитный тариф выгоднее</div>
+    <div id="result-heading" class="result-status">Расходы</div>
     <div class="metrics">
-      <div class="metric"><div class="metric-label">Мои расходы на поездки</div><div id="regularTotal" class="metric-value">2 520 ₽</div></div>
-      <div class="metric"><div class="metric-label">Расходы по ЕКАРТЕ</div><div class="metric-value">1 500 ₽</div></div>
+      <div class="metric"><div class="metric-label">на поездки</div><div id="regularTotal" class="metric-value">2 520 ₽</div></div>
+      <div class="metric"><div class="metric-label">по ЕКАРТЕ</div><div class="metric-value">1 500 ₽</div></div>
       <div id="savingMetric" class="metric highlight"><div id="differenceLabel" class="metric-label">Моя экономия с ЕКАРТОЙ</div><div id="differenceValue" class="metric-value">1 020 ₽</div></div>
     </div>
     <p id="summary" class="summary" role="status" aria-live="polite" aria-atomic="true">Экономия — 1 020 ₽ в месяц. Средняя стоимость одной поездки по тарифу — ≈ 25 ₽.</p>
+    <p id="tariffStatus" class="tariff-status" role="status" aria-live="polite" aria-atomic="true">Тариф вам подходит</p>
     <details class="calculation-details">
       <summary>Как рассчитано</summary>
       <p id="formula" class="formula">60 поездок × 42 ₽ = 2 520 ₽. Экономия: 2 520 ₽ − 1 500 ₽ = 1 020 ₽.</p>
     </details>
     <div id="nextStep" class="next-step">
-      <div class="next-step-copy"><strong>Тариф вам подходит.</strong> Оформить ЕКАРТУ или сменить тариф можно в кассе Фрисби.</div>
-      <a class="next-step-link" href="https://frisbi24.ru/payment-points" target="_top">Найти кассу</a>
+      <div class="next-step-copy">Оформить ЕКАРТУ или сменить тариф можно в кассе Фрисби.</div>
+      <a class="next-step-link" href="https://frisbi24.ru/payment-points" target="_top">Выберите кассу</a>
     </div>
   </section>
 </main>
@@ -333,7 +335,7 @@ const BREAK_EVEN=Math.floor(TARIFF/FARE)+1;
 
 const range=document.getElementById('tripsRange');
 const number=document.getElementById('tripsNumber');
-const resultHeading=document.getElementById('result-heading');
+const tariffStatus=document.getElementById('tariffStatus');
 const regularTotal=document.getElementById('regularTotal');
 const differenceLabel=document.getElementById('differenceLabel');
 const differenceValue=document.getElementById('differenceValue');
@@ -375,10 +377,10 @@ const update=rawTrips=>{
   range.value=String(trips);
   regularTotal.textContent=formatRubles(regular);
   setActivePreset(trips);
+  tariffStatus.textContent=difference>0?'Тариф вам подходит':'Тариф вам не подходит';
+  tariffStatus.classList.toggle('negative',difference<=0);
 
   if(difference>0){
-    resultHeading.textContent=trips===BREAK_EVEN?'Тариф уже немного выгоднее':'Безлимитный тариф выгоднее';
-    resultHeading.classList.remove('negative');
     savingMetric.classList.remove('negative');
     differenceLabel.textContent='Моя экономия с ЕКАРТОЙ';
     differenceValue.textContent=formatRubles(difference);
@@ -388,8 +390,6 @@ const update=rawTrips=>{
     nextStep.hidden=false;
   }else if(difference<0){
     const overpayment=Math.abs(difference);
-    resultHeading.textContent='Разовая оплата выгоднее';
-    resultHeading.classList.add('negative');
     savingMetric.classList.add('negative');
     differenceLabel.textContent='Переплата по тарифу';
     differenceValue.textContent=formatRubles(overpayment);
@@ -398,8 +398,6 @@ const update=rawTrips=>{
     formula.textContent=`Разовая оплата: ${trips} × ${formatRubles(FARE)} = ${formatRubles(regular)}. Переплата по тарифу: ${formatRubles(TARIFF)} − ${formatRubles(regular)} = ${formatRubles(overpayment)}.`;
     nextStep.hidden=true;
   }else{
-    resultHeading.textContent='Расходы одинаковы';
-    resultHeading.classList.remove('negative');
     savingMetric.classList.remove('negative');
     differenceLabel.textContent='Разница';
     differenceValue.textContent='0 ₽';
