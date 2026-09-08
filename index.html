@@ -179,8 +179,6 @@ input[type=range]:focus-visible{
   font-size:13px;
   font-weight:700
 }
-.tariff-status{margin:12px 0 0;color:var(--violet-dark);font-size:16px;line-height:1.45;font-weight:700}
-.tariff-status.negative{color:var(--negative)}
 .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
 .metric{
   min-width:0;
@@ -313,8 +311,7 @@ input[type=range]:focus-visible{
       <div class="metric"><div class="metric-label">по ЕКАРТЕ</div><div class="metric-value">1 500 ₽</div></div>
       <div id="savingMetric" class="metric highlight"><div id="differenceLabel" class="metric-label">Моя экономия с ЕКАРТОЙ</div><div id="differenceValue" class="metric-value">1 020 ₽</div></div>
     </div>
-    <p id="summary" class="summary" role="status" aria-live="polite" aria-atomic="true">Экономия — 1 020 ₽ в месяц. Средняя стоимость одной поездки по тарифу — ≈ 25 ₽.</p>
-    <p id="tariffStatus" class="tariff-status" role="status" aria-live="polite" aria-atomic="true">Тариф вам подходит</p>
+    <p id="summary" class="summary" role="status" aria-live="polite" aria-atomic="true">Экономия — 1 020 ₽ в месяц. Средняя стоимость одной поездки по тарифу ≈ 25 ₽. Тариф вам подходит.</p>
     <details class="calculation-details">
       <summary>Как рассчитано</summary>
       <p id="formula" class="formula">60 поездок × 42 ₽ = 2 520 ₽. Экономия: 2 520 ₽ − 1 500 ₽ = 1 020 ₽.</p>
@@ -335,7 +332,6 @@ const BREAK_EVEN=Math.floor(TARIFF/FARE)+1;
 
 const range=document.getElementById('tripsRange');
 const number=document.getElementById('tripsNumber');
-const tariffStatus=document.getElementById('tariffStatus');
 const regularTotal=document.getElementById('regularTotal');
 const differenceLabel=document.getElementById('differenceLabel');
 const differenceValue=document.getElementById('differenceValue');
@@ -377,15 +373,13 @@ const update=rawTrips=>{
   range.value=String(trips);
   regularTotal.textContent=formatRubles(regular);
   setActivePreset(trips);
-  tariffStatus.textContent=difference>0?'Тариф вам подходит':'Тариф вам не подходит';
-  tariffStatus.classList.toggle('negative',difference<=0);
 
   if(difference>0){
     savingMetric.classList.remove('negative');
     differenceLabel.textContent='Моя экономия с ЕКАРТОЙ';
     differenceValue.textContent=formatRubles(difference);
     summary.classList.remove('negative');
-    summary.textContent=`Экономия — ${formatRubles(difference)} в месяц. Средняя стоимость одной поездки по тарифу — ≈ ${formatAverage(average)}.`;
+    summary.textContent=`Экономия — ${formatRubles(difference)} в месяц. Средняя стоимость одной поездки по тарифу ≈ ${formatAverage(average)}.`;
     formula.textContent=`Разовая оплата: ${trips} × ${formatRubles(FARE)} = ${formatRubles(regular)}. Экономия: ${formatRubles(regular)} − ${formatRubles(TARIFF)} = ${formatRubles(difference)}.`;
     nextStep.hidden=false;
   }else if(difference<0){
@@ -406,6 +400,7 @@ const update=rawTrips=>{
     formula.textContent=`Разовая оплата: ${trips} × ${formatRubles(FARE)} = ${formatRubles(TARIFF)}.`;
     nextStep.hidden=true;
   }
+  summary.textContent+=difference>0?' Тариф вам подходит.':' Тариф вам не подходит.';
 };
 
 range.addEventListener('input',event=>update(event.target.value));
